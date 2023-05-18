@@ -1,0 +1,22 @@
+{% extends "base2.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1>Welcome to download page</h1>
+    <p>Fill out the form.</p>
+    <form action="{{ url_for('thank_you')}}">
+        <label for="url">Youtube link url:</label>
+        <input type="text" name="url">
+        <label for="filename">Filename: (example.mp3)</label>
+        <input type="text" name="filename">
+        <br>
+        <label for="giveback">Do you want your music in your browser</label>
+        <input type="checkbox" name="giveback" checked>
+        <br>
+        <label for="delete">Do you want to delete after download?</label>
+        <input type="checkbox" name="delete" checked>
+        <br>
+        <input type="submit" value="Submit Form">
+        
+</div>
+{% endblock %}
