@@ -20,20 +20,38 @@ if 'MP3PATH' in os.environ:
 else:
     mp3path = "./mp3"
 
-def checkurl(url):
-    if "https://www.youtube.com" in str(url):
-        return True
-    else:
-        return False
-
-app = Flask(__name__)
+if os.path.exists(mp4path):
+    pass
+else:
+    os.mkdir(mp4path)
 
 if os.path.exists(mp3path):
     pass
 else:
     os.mkdir(mp3path)
 
-print(Flask(__name__))
+
+def checkurl(url):
+    if "https://www.youtube.com" in str(url):
+        return True
+    else:
+        return False
+
+def audioconvert(filename):
+        videoclip = VideoFileClip(str(mp4path + "/" + filename + ".mp4"))
+        audioclip = videoclip.audio
+        audioclip.write_audiofile(str(mp3path + "/" + filename + ".mp3"))
+
+def DownLoadStream(url,filename):    
+        try:
+            video = YouTube(str(url))
+            video_streams = video.streams.filter(file_extension='mp4').get_highest_resolution()
+            video_streams.download(filename = str(filename + ".mp4"), output_path = mp4path)
+        
+        except: 
+            print("Hiba",dstname)
+
+app = Flask(__name__)
 
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
@@ -49,9 +67,8 @@ def signup_form():
 
 @app.route('/thank_you')
 def thank_you():
-    cpath=request.headers.get('X-Script-Name')
+    #cpath=request.headers.get('X-Script-Name')
     url = request.args.get('url')
-
     if not checkurl(url):
     
         return render_template('signup.html')
@@ -60,38 +77,19 @@ def thank_you():
     delete = request.args.get('delete')
     giveback= request.args.get('giveback')
     
-    def DownLoadStream(url,filename):
-    
-        try:
-            video = YouTube(str(url))
-            video_streams = video.streams.filter(file_extension='mp4').get_highest_resolution()
-            video_streams.download(filename = str(filename + ".mp4"), output_path = mp4path)
-        
-        except: 
-            print("Hiba",dstname)
-    
-    def audioconvert(filename):
-        videoclip = VideoFileClip(str(mp4path + "/" + filename + ".mp4"))
-        audioclip = videoclip.audio
-        audioclip.write_audiofile(str(mp3path + filename + ".mp3"))
-
     DownLoadStream(url,filename)
     
     audioconvert(filename)
-    print(giveback)
     if os.path.isfile(mp3path + "/" + filename + ".mp3"):
+        if delete == 'on':
+            os.remove(mp4path + "/" + filename + ".mp4")
+        else:
+                pass
         if giveback == 'on':
             return send_file(mp3path + "/" + filename + ".mp3")
         else:
             pass
-        
-        if delete == 'on':
-            os.remove(mp4path + "/" + filename + ".mp4")
-    
-        else:
-                pass
         return render_template('/signup.html')
-
-
+    
 if __name__ == '__main__':
     app.run()
