@@ -13,12 +13,12 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 if "MP4PATH" in os.environ:
     mp4path = str(os.environ['MP4PATH'])
 else:
-    mp4path = "./mp4"
+    mp4path = "mp4"
 
 if 'MP3PATH' in os.environ:
     mp3path = str(os.environ['MP3PATH'])
 else:
-    mp3path = "./mp3"
+    mp3path = "mp3"
 
 if os.path.exists(mp4path):
     pass
@@ -38,6 +38,7 @@ def checkurl(url):
         return False
 
 def audioconvert(filename):
+        print(filename)
         videoclip = VideoFileClip(str(mp4path + "/" + filename + ".mp4"))
         audioclip = videoclip.audio
         audioclip.write_audiofile(str(mp3path + "/" + filename + ".mp3"))
@@ -78,10 +79,10 @@ def thank_you():
     giveback= request.args.get('giveback')
     
     DownLoadStream(url,filename)
-    
     audioconvert(filename)
     if os.path.isfile(mp3path + "/" + filename + ".mp3"):
         if delete == 'on':
+            print()
             os.remove(mp4path + "/" + filename + ".mp4")
         else:
                 pass
