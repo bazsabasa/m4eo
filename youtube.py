@@ -13,12 +13,12 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 if "MP4PATH" in os.environ:
     mp4path = str(os.environ['MP4PATH'])
 else:
-    mp4path = "./"
+    mp4path = "./mp4"
 
 if 'MP3PATH' in os.environ:
     mp3path = str(os.environ['MP3PATH'])
 else:
-    mp3path = "./"
+    mp3path = "./mp3"
 
 def checkurl(url):
     if "https://www.youtube.com" in str(url):
@@ -28,7 +28,13 @@ def checkurl(url):
 
 app = Flask(__name__)
 
+if os.path.exists(mp3path):
+    pass
+else:
+    os.mkdir(mp3path)
+
 print(Flask(__name__))
+
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
